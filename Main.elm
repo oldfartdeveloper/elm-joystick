@@ -5,9 +5,9 @@ import Joystick exposing (..)
 
 
 main =
-    Html.beginnerProgram
-        { model = model
+    Html.program
+        { init = init
         , view = view
         , update = update
---        , subscriptions = subscriptions
+        , subscriptions = subscriptions
         }

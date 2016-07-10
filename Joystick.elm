@@ -2,7 +2,8 @@ module Joystick
     exposing
         ( Model
         , update
-        , model
+        , init
+        , subscriptions
         , view
         )
 
@@ -15,6 +16,7 @@ import Html.App as Html
 import Debug exposing (log)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Time exposing (Time, millisecond)
 import Svg.Events exposing (onMouseDown, onMouseUp)
 import Color exposing (..)
 
@@ -22,8 +24,16 @@ import Color exposing (..)
 -- MODEL
 
 
+type Direction
+    = None
+    | Left
+    | Up
+    | Right
+    | Down
+
+
 type alias Model =
-    { position : Msg
+    { position : Direction
     }
 
 
@@ -31,33 +41,76 @@ type alias Model =
 -- UPDATE
 
 
-model : Model
-model =
-    { position = None
-    }
-
+init : ( Model, Cmd Msg )
+init =
+    ( { position = None
+      }
+    , Cmd.none
+    )
 
 
 -- UPDATE
 
 
 type Msg
-    = None
-    | Left
-    | Right
-    | Up
-    | Down
+    = Tick Time
+    | ActionNone
+    | ActionLeft
+    | ActionRight
+    | ActionUp
+    | ActionDown
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         dummy =
             log "Clicks" msg
     in
-        { model |
-            position = msg
-        }
+        case msg of
+            Tick newTime ->
+                ( model, Cmd.none )
+
+            ActionNone ->
+                ( { model
+                    | position = None
+                  }
+                , Cmd.none
+                )
+
+            ActionLeft ->
+                ( { model
+                    | position = Left
+                  }
+                , Cmd.none
+                )
+
+            ActionUp ->
+                ( { model
+                    | position = Up
+                  }
+                , Cmd.none
+                )
+
+            ActionRight ->
+                ( { model
+                    | position = Right
+                  }
+                , Cmd.none
+                )
+
+            ActionDown ->
+                ( { model
+                    | position = Down
+                  }
+                , Cmd.none
+                )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Time.every (100 * millisecond) Tick
+
 
 
 -- VIEW
@@ -75,54 +128,54 @@ view model =
             [ polygon
                 [ fill (doBackground model Left)
                 , points "0 0, 30 30, 30 70, 0 100"
-                , stroke "indianred"
+                , stroke borderColor
                 , strokeWidth (toString edgeRatio)
-                , onMouseDown Left
-                , onMouseUp None
+                , onMouseDown ActionLeft
+                , onMouseUp ActionNone
                 ]
                 []
             , polygon
                 [ fill (doBackground model Up)
                 , points "0 0, 30 30, 70 30, 100 0"
-                , stroke "indianred"
+                , stroke borderColor
                 , strokeWidth (toString edgeRatio)
-                , onMouseDown Up
-                , onMouseUp None
+                , onMouseDown ActionUp
+                , onMouseUp ActionNone
                 ]
                 []
             , polygon
                 [ fill (doBackground model Right)
                 , points "100 0, 70 30, 70 70, 100 100"
-                , stroke "indianred"
+                , stroke borderColor
                 , strokeWidth (toString edgeRatio)
-                , onMouseDown Right
-                , onMouseUp None
+                , onMouseDown ActionRight
+                , onMouseUp ActionNone
                 ]
                 []
             , polygon
                 [ fill (doBackground model Down)
                 , points "0 100, 30 70, 70 70, 100 100"
-                , stroke "indianred"
+                , stroke borderColor
                 , strokeWidth (toString edgeRatio)
-                , onMouseDown Down
-                , onMouseUp None
+                , onMouseDown ActionDown
+                , onMouseUp ActionNone
                 ]
                 []
             , polygon
                 [ fill (doBackground model None)
                 , points "30 30, 70 30, 70 70, 30 70"
-                , stroke "indianred"
+                , stroke borderColor
                 , strokeWidth (toString edgeRatio)
-                , onMouseUp None
+                , onMouseUp ActionNone
                 ]
                 []
             ]
         ]
 
 
-doBackground : Model -> Msg -> String
-doBackground model msg =
-    if model.position == msg then
+doBackground : Model -> Direction -> String
+doBackground model direction =
+    if model.position == direction then
         "red"
     else
         "white"
@@ -131,3 +184,7 @@ doBackground model msg =
 edgeRatio : Float
 edgeRatio =
     1.0
+
+
+borderColor =
+    "indianred"
