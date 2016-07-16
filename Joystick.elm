@@ -8,13 +8,10 @@ module Joystick
         )
 
 import Html exposing (Html, div, button)
-import Html.App as Html
-import Debug exposing (log)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Time exposing (Time, millisecond)
 import Svg.Events exposing (onMouseDown, onMouseUp)
-import Color exposing (..)
 
 
 -- MODEL
@@ -214,5 +211,6 @@ edgeRatio =
     1.0
 
 
+borderColor : String
 borderColor =
     "indianred"
