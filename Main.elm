@@ -4,6 +4,7 @@ import Html.App as Html
 import Joystick exposing (..)
 
 
+main : Program Never
 main =
     Html.program
         { init = init
