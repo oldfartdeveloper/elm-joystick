@@ -7,11 +7,19 @@ module Joystick
         , view
         )
 
+{-| This module provides you with a control panel to provide mouse
+clicks/touches to indicate direction.  Especially useful for
+smart devices missing direction keys.
+
+@docs setMinimumBackgroundFillDuration
+
+-}
+
 import Html exposing (Html, div, button)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import Time exposing (Time, millisecond)
 import Svg.Events exposing (onMouseDown, onMouseUp)
+import Time exposing (Time, millisecond)
 
 
 -- MODEL
@@ -84,32 +92,25 @@ update msg model =
             )
 
         ActionLeft ->
-            ( { model
-                | position = Left
-              }
-            , Cmd.none
-            )
+            updatePosition model Left
 
         ActionUp ->
-            ( { model
-                | position = Up
-              }
-            , Cmd.none
-            )
+            updatePosition model Up
 
         ActionRight ->
-            ( { model
-                | position = Right
-              }
-            , Cmd.none
-            )
+            updatePosition model Right
 
         ActionDown ->
-            ( { model
-                | position = Down
-              }
-            , Cmd.none
-            )
+            updatePosition model Down
+
+
+updatePosition : Model -> Direction -> ( Model, Cmd Msg )
+updatePosition model direction =
+    ( { model
+        | position = direction
+      }
+    , Cmd.none
+    )
 
 
 {-| On Macintosh trackpad, tapping the pad (i.e. without
